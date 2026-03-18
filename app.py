@@ -15,14 +15,12 @@ HTML_PAGE = """
             color: white;
             text-align: center;
         }
-
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 10px;
             padding: 20px;
         }
-
         img {
             width: 100%;
             height: 150px;
@@ -37,8 +35,7 @@ HTML_PAGE = """
 
 <div class="grid">
 {% for img in images %}
-    <img src="{{ img }}" loading="lazy"
-         onerror="this.style.display='none'">
+    <img src="{{ img }}" loading="lazy" onerror="this.style.display='none'">
 {% endfor %}
 </div>
 
@@ -48,19 +45,21 @@ HTML_PAGE = """
 
 @app.route("/")
 def index():
-
+    # Get path to data.txt
     file_path = os.path.join(os.path.dirname(__file__), "data.txt")
-
     images = []
 
-    with open(file_path, "r") as file:
-        for line in file:
-            url = line.strip()
-            if url:
-                images.append(url)
+    # Read all URLs from data.txt
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            for line in file:
+                url = line.strip()
+                if url:
+                    images.append(url)
 
     return render_template_string(HTML_PAGE, images=images)
 
-
+# Production-ready: use PORT from environment variable
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
