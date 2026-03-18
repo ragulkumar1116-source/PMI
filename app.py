@@ -35,8 +35,7 @@ HTML_PAGE = """
 
 <div class="grid">
 {% for img in images %}
-    <img src="{{ img }}" loading="lazy"
-         onerror="this.style.display='none'">
+    <img src="{{ img }}" loading="lazy" onerror="this.style.display='none'">
 {% endfor %}
 </div>
 
@@ -46,28 +45,21 @@ HTML_PAGE = """
 
 @app.route("/")
 def index():
+    # Get path to data.txt
     file_path = os.path.join(os.path.dirname(__file__), "data.txt")
     images = []
 
-    try:
-        if os.path.exists(file_path):
-            with open(file_path, "r") as file:
-                for line in file:
-                    url = line.strip()
-                    
-                    # 🔥 Force HTTPS (important fix)
-                    if url.startswith("http://"):
-                        url = url.replace("http://", "https://")
-
-                    if url:
-                        images.append(url)
-
-    except Exception as e:
-        return f"Error: {str(e)}"
+    # Read all URLs from data.txt
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            for line in file:
+                url = line.strip()
+                if url:
+                    images.append(url)
 
     return render_template_string(HTML_PAGE, images=images)
 
+# Production-ready: use PORT from environment variable
 if __name__ == "__main__":
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
