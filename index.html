@@ -1,68 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Image Viewer</title>
+    <title>Student Image Viewer</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            padding: 10px;
+        }
 
-<style>
-    body {
-        font-family: Arial;
-        text-align: center;
-        background: #f5f5f5;
-    }
+        h2 {
+            text-align: center;
+        }
 
-    #gallery {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
+        #gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
-    img {
-        width: 200px;
-        height: 200px;
-        margin: 10px;
-        object-fit: cover;
-        border-radius: 10px;
-        background: #ddd;
-    }
-</style>
+        img {
+            width: 120px;
+            height: 120px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            object-fit: cover;
+        }
 
+        /* Popup */
+        #popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            text-align: center;
+        }
+
+        #popup img {
+            max-width: 90%;
+            max-height: 90%;
+            margin-top: 3%;
+        }
+    </style>
 </head>
 <body>
 
-<h2>Photo Gallery</h2>
+<h2>Student Images</h2>
 
 <div id="gallery"></div>
 
-<!-- 🔥 Paste links here (NO quotes, NO comma) -->
-<pre id="links" style="display:none;">
-http://14.139.171.133/CourseRegistration/photo/117011353069.jpg
-http://14.139.171.133/CourseRegistration/photo/117011353064.jpg
-http://14.139.171.133/CourseRegistration/photo/117011353062.jpg
-http://14.139.171.133/CourseRegistration/photo/117011353061.jpg
-</pre>
-
+<!-- Popup -->
+<div id="popup">
+    <img id="popupImg">
+</div>
 <script>
-const raw = document.getElementById("links").innerText;
-const gallery = document.getElementById("gallery");
+let start = 89000;
+let end = 100000;
 
-raw.split("\n").forEach(link => {
-    link = link.trim();
+let container = document.getElementById("gallery");
 
-    if (link !== "") {
-        const img = document.createElement("img");
+for (let i = start; i <= end; i++) {
 
-        // ⚡ Try HTTP first
-        img.src = link;
+    let img = document.createElement("img");
+    let url = "http://121.200.53.156/hindusthan/MstStudentThumb/" + i + ".png";
 
-        img.onerror = function() {
-            this.style.display = "none";
-        };
+    img.src = url;
 
-        gallery.appendChild(img);
-    }
-});
+    img.onload = function () {
+        console.log("Loaded:", url);
+    };
+
+    img.onerror = function () {
+        console.log("Not found:", url);
+        this.style.display = "none";
+    };
+
+    container.appendChild(img);
+}
 </script>
-
 </body>
 </html>
