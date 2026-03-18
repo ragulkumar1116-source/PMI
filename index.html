@@ -1,60 +1,68 @@
-from flask import Flask, Response, render_template_string
-import requests
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Image Viewer</title>
 
-app = Flask(__name__)
+<style>
+    body {
+        font-family: Arial;
+        text-align: center;
+        background: #f5f5f5;
+    }
 
-# 🔥 Your image links (NO quotes problem solved here)
-image_links = """
+    #gallery {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    img {
+        width: 200px;
+        height: 200px;
+        margin: 10px;
+        object-fit: cover;
+        border-radius: 10px;
+        background: #ddd;
+    }
+</style>
+
+</head>
+<body>
+
+<h2>Photo Gallery</h2>
+
+<div id="gallery"></div>
+
+<!-- 🔥 Paste links here (NO quotes, NO comma) -->
+<pre id="links" style="display:none;">
 http://14.139.171.133/CourseRegistration/photo/117011353069.jpg
 http://14.139.171.133/CourseRegistration/photo/117011353064.jpg
 http://14.139.171.133/CourseRegistration/photo/117011353062.jpg
 http://14.139.171.133/CourseRegistration/photo/117011353061.jpg
-"""
+</pre>
 
-# Convert text → list
-links = [i.strip() for i in image_links.split("\n") if i.strip()]
+<script>
+const raw = document.getElementById("links").innerText;
+const gallery = document.getElementById("gallery");
 
+raw.split("\n").forEach(link => {
+    link = link.trim();
 
-@app.route("/")
-def home():
-    html = """
-    <html>
-    <head>
-        <title>Image Viewer</title>
-        <style>
-            body { font-family: Arial; text-align: center; background:#f5f5f5; }
-            .gallery { display:flex; flex-wrap:wrap; justify-content:center; }
-            img {
-                width:200px; height:200px;
-                margin:10px;
-                object-fit:cover;
-                border-radius:10px;
-            }
-        </style>
-    </head>
-    <body>
-        <h2>Photo Gallery</h2>
-        <div class="gallery">
-            {% for link in links %}
-                <img src="/proxy?url={{link}}">
-            {% endfor %}
-        </div>
-    </body>
-    </html>
-    """
-    return render_template_string(html, links=links)
+    if (link !== "") {
+        const img = document.createElement("img");
 
+        // ⚡ Try HTTP first
+        img.src = link;
 
-@app.route("/proxy")
-def proxy():
-    url = request.args.get("url")
+        img.onerror = function() {
+            this.style.display = "none";
+        };
 
-    try:
-        r = requests.get(url, timeout=5)
-        return Response(r.content, content_type=r.headers['Content-Type'])
-    except:
-        return "Error loading image", 500
+        gallery.appendChild(img);
+    }
+});
+</script>
 
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+</body>
+</html>
